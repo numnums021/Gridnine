@@ -5,20 +5,20 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+
         List<Flight> flightList = FlightBuilder.createFlights();
-        System.out.println("Исходный список перелётов");
-        System.out.println(flightList);
+        FlightFiltering flightFiltering = new FlightFilteringImpl();
+
+        System.out.println("Исходный список полётов:");
+        flightFiltering.printFlight(flightList);
 
         System.out.println("\nВылет до текущего момента времени");
-        flightList = FlightFiltering.filterDepartureBeforeCurrentDate(flightList);
-        System.out.println(flightList);
+        flightFiltering.printFlight(flightFiltering.filterDepartureBeforeCurrentDate(flightList));
 
         System.out.println("\nИмеются сегменты с датой прилёта раньше даты вылета");
-        flightList = FlightFiltering.filterArrivalDateBeforeDepartureDate(flightList);
-        System.out.println(flightList);
+        flightFiltering.printFlight(flightFiltering.filterArrivalDateBeforeDepartureDate(flightList));
 
-        System.out.println("\nИмеются сегменты с датой прилёта раньше даты вылета");
-        flightList = FlightFiltering.filterNumberOfHoursOnEarth(flightList);
-        System.out.println(flightList);
+        System.out.println("\nОбщее время, проведённое на земле превышает два часа");
+        flightFiltering.printFlight(flightFiltering.filterNumberOfHoursOnEarth(flightList));
     }
 }
