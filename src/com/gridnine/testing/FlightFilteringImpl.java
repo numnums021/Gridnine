@@ -11,7 +11,7 @@ public class FlightFilteringImpl implements FlightFiltering{
         for (Flight flight : flightList) {
             List<Segment> segmentList = new ArrayList<>();
             for (int j = 0; j < flight.getSegments().size(); j++) {
-                if (flight.getSegments().get(j).getDepartureDate().isAfter(LocalDateTime.now())) {
+                if (flight.getSegments().get(j).getDepartureDate().isBefore(LocalDateTime.now())) {
                     segmentList.add(flight.getSegments().get(j));
                 }
                 else {
@@ -30,11 +30,8 @@ public class FlightFilteringImpl implements FlightFiltering{
         for (Flight flight : flightList) {
             List<Segment> segmentList = new ArrayList<>();
             for (int j = 0; j < flight.getSegments().size(); j++) {
-                if (flight.getSegments().get(j).getDepartureDate().isBefore(flight.getSegments().get(j).getArrivalDate())) {
-                    segmentList.add(flight.getSegments().get(j));
-                }
-                else {
-                    segmentList.clear();
+                if (flight.getSegments().get(j).getDepartureDate().isAfter(flight.getSegments().get(j).getArrivalDate())) {
+                    segmentList.addAll(flight.getSegments());
                     break;
                 }
             }
@@ -50,10 +47,10 @@ public class FlightFilteringImpl implements FlightFiltering{
             List<Segment> segmentList = new ArrayList<>();
             for (int j = 0; j < flight.getSegments().size() - 1; j++) {
                 LocalDateTime from = flight.getSegments().get(j).getArrivalDate();
-                LocalDateTime to = flight.getSegments().get(j+1).getDepartureDate();
-                Duration duration = Duration.between(from, to);
-                if ( duration.getSeconds() >= 7200) {
+                LocalDateTime to = flight.getSegments().get(j + 1).getDepartureDate();
+                if ( Duration.between(from, to).getSeconds() >= 7200) {
                     segmentList.addAll(flight.getSegments());
+                    break;
                 }
             }
             if (!segmentList.isEmpty()) {
