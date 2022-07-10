@@ -10,15 +10,21 @@ public class Main {
         FlightFiltering flightFiltering = new FlightFilteringImpl();
 
         System.out.println("Исходный список полётов:");
-        flightFiltering.printFlight(flightList);
+        printFlight(flightList);
 
         System.out.println("\nВылет до текущего момента времени");
-        flightFiltering.printFlight(flightFiltering.filterDepartureBeforeCurrentDate(flightList));
+        printFlight(flightFiltering.filterDepartureBeforeCurrentDate(flightList));
 
         System.out.println("\nИмеются сегменты с датой прилёта раньше даты вылета");
-        flightFiltering.printFlight(flightFiltering.filterArrivalDateBeforeDepartureDate(flightList));
+        printFlight(flightFiltering.filterArrivalDateBeforeDepartureDate(flightList));
 
         System.out.println("\nОбщее время, проведённое на земле превышает два часа");
-        flightFiltering.printFlight(flightFiltering.filterNumberOfHoursOnEarth(flightList));
+        printFlight(flightFiltering.filterNumberOfHoursOnEarth(flightList));
+    }
+
+    public static void printFlight(List<Flight> flightList) {
+        for (Flight flight : flightList) {
+            System.out.println(flight.getSegments().toString());
+        }
     }
 }

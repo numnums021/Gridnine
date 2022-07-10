@@ -1,8 +1,7 @@
 package com.gridnine.testing;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 
 
 public class FlightFilteringImpl implements FlightFiltering{
@@ -10,10 +9,13 @@ public class FlightFilteringImpl implements FlightFiltering{
     public List<Flight> filterDepartureBeforeCurrentDate(List<Flight> flightList) {
         List<Flight> newFlightList = new ArrayList<>();
         for (Flight flight : flightList) {
-            List<Segment> segmentList = flight.getSegments();
-            for (int j = 0; j < segmentList.size(); j++) {
-                if (segmentList.get(j).getDepartureDate().isBefore(LocalDateTime.now())) {
-                    segmentList.remove(j);
+            List<Segment> segmentList = new ArrayList<>();
+            for (int j = 0; j < flight.getSegments().size(); j++) {
+                if (flight.getSegments().get(j).getDepartureDate().isAfter(LocalDateTime.now())) {
+                    segmentList.add(flight.getSegments().get(j));
+                }
+                else {
+                    segmentList.clear();
                     break;
                 }
             }
@@ -26,10 +28,13 @@ public class FlightFilteringImpl implements FlightFiltering{
     public List<Flight> filterArrivalDateBeforeDepartureDate(List<Flight> flightList) {
         List<Flight> newFlightList = new ArrayList<>();
         for (Flight flight : flightList) {
-            List<Segment> segmentList = flight.getSegments();
-            for (int j = 0; j < segmentList.size(); j++) {
-                if (segmentList.get(j).getDepartureDate().isAfter(segmentList.get(j).getArrivalDate())) {
-                    segmentList.remove(j);
+            List<Segment> segmentList = new ArrayList<>();
+            for (int j = 0; j < flight.getSegments().size(); j++) {
+                if (flight.getSegments().get(j).getDepartureDate().isBefore(flight.getSegments().get(j).getArrivalDate())) {
+                    segmentList.add(flight.getSegments().get(j));
+                }
+                else {
+                    segmentList.clear();
                     break;
                 }
             }
@@ -42,26 +47,22 @@ public class FlightFilteringImpl implements FlightFiltering{
     public List<Flight> filterNumberOfHoursOnEarth(List<Flight> flightList) {
         List<Flight> newFlightList = new ArrayList<>();
         for (Flight flight : flightList) {
-            List<Segment> segmentList = flight.getSegments();
-            for (int j = 0; j < segmentList.size() - 1; j++) {
-                double beforeHours = segmentList.get(j).getArrivalDate().getHour()
-                        + (segmentList.get(j).getArrivalDate().getMinute() / 60.0)
-                        + (segmentList.get(j).getArrivalDate().getSecond() / 3600.0);
-                double afterHours = segmentList.get(j + 1).getDepartureDate().getHour()
-                        + segmentList.get(j + 1).getDepartureDate().getMinute() / 60.0
-                        + (segmentList.get(j + 1).getDepartureDate().getSecond() / 3600.0);
-                if (afterHours - beforeHours >= 2 && afterHours > 0) {
-                    segmentList.remove(j);
-                    break;
+            List<Segment> segmentList = new ArrayList<>();
+            for (int j = 0; j < flight.getSegments().size() - 1; j++) {
+                LocalDateTime from = flight.getSegments().get(j).getArrivalDate();
+                LocalDateTime to = flight.getSegments().get(j+1).getDepartureDate();
+                Duration duration = Duration.between(from, to);
+                if ( duration.getSeconds() >= 7200) {
+                    segmentList.addAll(flight.getSegments());
                 }
             }
-            if (!segmentList.isEmpty()) newFlightList.add(new Flight(segmentList));
+            if (!segmentList.isEmpty()) {
+                Set<Segment> set = new LinkedHashSet<>(segmentList);
+                newFlightList.add(new Flight(new ArrayList<>(set)));
+            }
         }
 
         return newFlightList;
     }
 
-    public void printFlight(List<Flight> flightList) {
-        flightList.forEach(System.out::println);
-    }
 }
