@@ -48,18 +48,14 @@ public class FlightFilteringImpl implements FlightFiltering{
             for (int j = 0; j < flight.getSegments().size() - 1; j++) {
                 LocalDateTime from = flight.getSegments().get(j).getArrivalDate();
                 LocalDateTime to = flight.getSegments().get(j + 1).getDepartureDate();
-                if ( Duration.between(from, to).getSeconds() >= 7200) {
+                if (Duration.between(from, to).getSeconds() >= 7200) {
                     segmentList.addAll(flight.getSegments());
                     break;
                 }
             }
-            if (!segmentList.isEmpty()) {
-                Set<Segment> set = new LinkedHashSet<>(segmentList);
-                newFlightList.add(new Flight(new ArrayList<>(set)));
-            }
+            if (!segmentList.isEmpty()) newFlightList.add(new Flight(segmentList));
         }
 
         return newFlightList;
     }
-
 }

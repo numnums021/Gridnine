@@ -24,7 +24,7 @@ public class Main {
 
     public static void printFlight(List<Flight> flightList) {
         for (Flight flight : flightList) {
-            System.out.println(flight.getSegments().toString());
+            System.out.println(flight.getSegments());
         }
     }
 }
