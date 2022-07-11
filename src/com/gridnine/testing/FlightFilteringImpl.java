@@ -12,10 +12,7 @@ public class FlightFilteringImpl implements FlightFiltering{
             List<Segment> segmentList = new ArrayList<>();
             for (int j = 0; j < flight.getSegments().size(); j++) {
                 if (flight.getSegments().get(j).getDepartureDate().isBefore(LocalDateTime.now())) {
-                    segmentList.add(flight.getSegments().get(j));
-                }
-                else {
-                    segmentList.clear();
+                    segmentList.addAll(flight.getSegments());
                     break;
                 }
             }
